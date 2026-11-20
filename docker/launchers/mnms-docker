@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+set -eo pipefail
+
+# TODO docker change image name
+IMAGE_NAME=ghcr.io/yo35/MnMS:latest
+
+# Check whether Docker is available or not.
+if ! command -v docker >/dev/null 2>&1; then
+    echo "Error: Docker is not installed (or not in PATH)." >&2
+    exit 1
+fi
+
+# Detect rootless Docker installs.
+if ! docker_security_options=$(docker info --format '{{.SecurityOptions}}' 2>/dev/null); then
+    echo "Error: cannot connect to the Docker daemon." >&2
+    exit 1
+fi
+
+# With rootful Docker (most common case), run the container as the current user,
+# so that the files written in /data end up with the right owner ID and group ID.
+# In that case, as the current (host) user has no home directory in the container,
+# it is also necessary to explicitly set one.
+# With rootless Docker, root in the container already maps to the current host user.
+user_mapping_args=()
+if [[ $docker_security_options != *rootless* ]]; then
+    user_mapping_args=(--user "$(id -u):$(id -g)" -e HOME=/tmp)
+fi
+
+# Fetch the latest version of the image if not up to date.
+# If the registry cannot be reached (e.g. offline), fall back to the local copy of the image, if any.
+if ! docker pull "$IMAGE_NAME" >&2; then
+    echo "Warning: cannot check for updates of $IMAGE_NAME, using the local copy of the image (if any)." >&2
+fi
+
+# Run Docker, with parameters:
+# - `-it`: attach a terminal and keep stdin open, so that the app behaves as when run from a terminal.
+# - `--rm`: delete the container when it exits (otherwise, stopped containers accumulate).
+# - `--volume ...`: mount the current (host) directory as /data in the container.
+exec docker run -it --rm --volume "$PWD:/data" "${user_mapping_args[@]}" "$IMAGE_NAME" "$@"
