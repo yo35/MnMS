@@ -41,7 +41,7 @@ if errorlevel 1 (
 rem Check whether the Docker daemon can be reached (with Docker Desktop, it must be started).
 docker info >nul 2>&1
 if errorlevel 1 (
-    echo Error: cannot connect to the Docker daemon ^(is Docker Desktop running?^). 1>&2
+    echo Error: cannot connect to the Docker daemon. 1>&2
     exit /b 1
 )
 
