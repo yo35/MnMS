@@ -87,7 +87,7 @@ See `examples/cli/mnms_settings.json` for an example of such a configuration fil
 and run `mnms -h` for more details.
 
 Alternatively, simulations can be run through Docker, without installing MnMS:
-see [MnMS-Docker documentation](https://github.com/EMob-Lab/MnMS/blob/main/docker/launchers).
+see [MnMS-Docker documentation](https://github.com/EMob-Lab/MnMS/tree/main/docker/launchers).
 
 Tutorials can be found in the `doc/tutorials` directory as jupyter notebooks.
 Some simulation examples can be found in the `examples` directory.
