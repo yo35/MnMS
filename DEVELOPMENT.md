@@ -117,3 +117,18 @@ python -m build --wheel    # ... or just the wheel
 ```
 
 The corresponding artifacts are generated in directory `dist`.
+
+
+### Generate a Docker image encapsulating MnMS
+
+```shell
+pip install --group distrib
+python -m build --wheel
+docker build -t <image-name> --build-context wheel_dir=dist docker/image_src
+```
+
+Remark: the `dist` directory must not contain any wheel file from a previous build,
+as the build step fails if it finds more than one wheel file in it.
+
+The Dockerfile and the other files needed to build the image are located in directory
+`docker/image_src`. The launcher scripts to run the image are in `docker/launchers`.

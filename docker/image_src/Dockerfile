@@ -7,6 +7,9 @@
 #   python -m build --wheel
 #   docker build -t <image-name> --build-context wheel_dir=dist docker/image_src
 #
+# Remark: the `dist` directory must not contain any wheel file from a previous build,
+# as the build step fails if it finds more than one wheel file in it.
+#
 # When the image is built by the deployment workflow and published to the container registry,
 # the metadata (title, description...) defined in labels.txt are attached to the image
 # (they are not applied when the image is built with `docker build`, as in the example above).
