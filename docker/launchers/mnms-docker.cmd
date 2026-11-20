@@ -12,6 +12,20 @@ rem from the container registry before running it (so that you get updates autom
 rem To run an image built locally, comment out this variable.
 set "TRY_PULL_IMAGE_FROM_REGISTRY=1"
 
+rem If FIX_WINDOWS_PATH_SEPARATORS is defined, all the Windows path separators (backslash)
+rem appearing on the command line are replaced by '/'.
+rem This is because the Docker image runs Linux, which expects '/' as path separator.
+rem WARNINGS:
+rem  - This conversion affects all the arguments passed to mnms-docker (whether or not they represent a path).
+rem    To disable it, comment out this variable.
+rem  - No conversion is applied to the paths that may appear INSIDE the JSON settings file or Python script
+rem    passed to mnms-docker. The paths in these files must use '/' as path separator,
+rem    and need to be fixed manually if not the case.
+rem  - Regardless of path separators, all files used by the simulation (the JSON settings file or Python script,
+rem    and any file they reference) must be located in the current directory or one of its subdirectories,
+rem    and referenced by relative paths.
+set "FIX_WINDOWS_PATH_SEPARATORS=1"
+
 
 rem ---------------------------------------------------------------------------
 rem DO NOT MODIFY THE LAUNCHER SCRIPT BELOW
@@ -43,18 +57,11 @@ if defined TRY_PULL_IMAGE_FROM_REGISTRY if not "%TRY_PULL_IMAGE_FROM_REGISTRY%"=
     )
 )
 
-rem In the arguments passed to the container, Windows path separators (backslash) are replaced by '/'
-rem (the container runs Linux, which expects '/' as path separator).
-rem WARNINGS:
-rem  - This conversion affects all the arguments passed to mnms-docker (whether or not they represent a path).
-rem    To disable it, remove or comment out the line `if defined args set ...`.
-rem  - No conversion is applied to the paths that may appear INSIDE the JSON settings file or Python script
-rem    passed to mnms-docker. Thus, they must use '/' as path separator.
-rem  - Regardless of path separators, all files used by the simulation (the JSON settings file or Python script,
-rem    and any file they reference) must be located in the current directory or one of its subdirectories,
-rem    and referenced by relative paths.
+rem Path separator conversion, if enabled.
 set "args=%*"
-if defined args set "args=%args:\=/%"
+if defined FIX_WINDOWS_PATH_SEPARATORS if not "%FIX_WINDOWS_PATH_SEPARATORS%"=="0" (
+    if defined args set "args=%args:\=/%"
+)
 
 rem Run Docker, with parameters:
 rem - `-it`: attach a terminal and keep stdin open, so that the app behaves as when run from a terminal.
