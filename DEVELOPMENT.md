@@ -132,3 +132,7 @@ as the build step fails if it finds more than one wheel file in it.
 
 The Dockerfile and the other files needed to build the image are located in directory
 `docker/image_src`. The launcher scripts to run the image are in `docker/launchers`.
+
+The launcher scripts can also run an image built locally, with a few edits:
+- set the `IMAGE_NAME` variable to the `<image-name>` used in the `docker build` command above,
+- comment out `TRY_PULL_IMAGE_FROM_REGISTRY`.

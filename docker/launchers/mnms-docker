@@ -1,8 +1,21 @@
 #!/usr/bin/env bash
 set -eo pipefail
 
+
+# Identifier of the Docker image to run.
+# To run an image built locally, change it to the image name passed to the `docker build ...` command.
 # TODO docker change image name
 IMAGE_NAME=ghcr.io/yo35/mnms:latest
+
+# If TRY_PULL_IMAGE_FROM_REGISTRY is defined, fetch the latest version of the Docker image
+# from the container registry before running it (so that you get updates automatically).
+# To run an image built locally, comment out this variable.
+TRY_PULL_IMAGE_FROM_REGISTRY=1
+
+
+# -----------------------------------------------------------------------------
+# DO NOT MODIFY THE LAUNCHER SCRIPT BELOW
+# -----------------------------------------------------------------------------
 
 # Check whether Docker is available or not.
 if ! command -v docker >/dev/null 2>&1; then
@@ -28,8 +41,10 @@ fi
 
 # Fetch the latest version of the image if not up to date.
 # If the registry cannot be reached (e.g. offline), fall back to the local copy of the image, if any.
-if ! docker pull "$IMAGE_NAME" >&2; then
-    echo "Warning: cannot check for updates of $IMAGE_NAME, using the local copy of the image (if any)." >&2
+if [[ -n $TRY_PULL_IMAGE_FROM_REGISTRY && $TRY_PULL_IMAGE_FROM_REGISTRY != 0 ]]; then
+    if ! docker pull "$IMAGE_NAME" >&2; then
+        echo "Warning: cannot check for updates of $IMAGE_NAME, using the local copy of the image (if any)." >&2
+    fi
 fi
 
 # Run Docker, with parameters:

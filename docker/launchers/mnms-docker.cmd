@@ -1,8 +1,21 @@
 @echo off
 setlocal
 
+
+rem Identifier of the Docker image to run.
+rem To run an image built locally, change it to the image name passed to the `docker build ...` command.
 rem TODO docker change image name
 set "IMAGE_NAME=ghcr.io/yo35/mnms:latest"
+
+rem If TRY_PULL_IMAGE_FROM_REGISTRY is defined, fetch the latest version of the Docker image
+rem from the container registry before running it (so that you get updates automatically).
+rem To run an image built locally, comment out this variable.
+set "TRY_PULL_IMAGE_FROM_REGISTRY=1"
+
+
+rem ---------------------------------------------------------------------------
+rem DO NOT MODIFY THE LAUNCHER SCRIPT BELOW
+rem ---------------------------------------------------------------------------
 
 rem Check whether Docker is available or not.
 where docker >nul 2>&1
@@ -23,9 +36,11 @@ rem end up owned by the current Windows user.
 
 rem Fetch the latest version of the image if not up to date.
 rem If the registry cannot be reached (e.g. offline), fall back to the local copy of the image, if any.
-docker pull "%IMAGE_NAME%" 1>&2
-if errorlevel 1 (
-    echo Warning: cannot check for updates of %IMAGE_NAME%, using the local copy of the image ^(if any^). 1>&2
+if defined TRY_PULL_IMAGE_FROM_REGISTRY if not "%TRY_PULL_IMAGE_FROM_REGISTRY%"=="0" (
+    docker pull "%IMAGE_NAME%" 1>&2
+    if errorlevel 1 (
+        echo Warning: cannot check for updates of %IMAGE_NAME%, using the local copy of the image ^(if any^). 1>&2
+    )
 )
 
 rem In the arguments passed to the container, Windows path separators (backslash) are replaced by '/'
