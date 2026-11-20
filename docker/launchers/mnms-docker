@@ -2,7 +2,7 @@
 set -eo pipefail
 
 # TODO docker change image name
-IMAGE_NAME=ghcr.io/yo35/MnMS:latest
+IMAGE_NAME=ghcr.io/yo35/mnms:latest
 
 # Check whether Docker is available or not.
 if ! command -v docker >/dev/null 2>&1; then

@@ -2,7 +2,7 @@
 setlocal
 
 rem TODO docker change image name
-set "IMAGE_NAME=ghcr.io/yo35/MnMS:latest"
+set "IMAGE_NAME=ghcr.io/yo35/mnms:latest"
 
 rem Check whether Docker is available or not.
 where docker >nul 2>&1

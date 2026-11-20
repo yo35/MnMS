@@ -45,7 +45,7 @@ jobs:
 
     env:
       REGISTRY: ghcr.io
-      IMAGE_NAME: yo35/MnMS # TODO docker change image name
+      IMAGE_NAME: yo35/mnms # TODO docker change image name
 
     # TODO docker add environment
 
